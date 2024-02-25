@@ -1,0 +1,59 @@
+name: Continuous Deployment
+
+# This CD workflow is triggered only when the CI workflow completes successfully
+on:
+  workflow_run:
+    workflows: ["Continuous Integration"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest # Specifies that the job should run on the latest Ubuntu runner
+
+    steps:
+      # Checkout the code in the GitHub repository
+      - uses: actions/checkout@v4
+
+      # Set up the specified Python version
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      # Install AWS Command Line Interface for interacting with AWS services
+      - name: Install AWS CLI
+        run: |
+          pip install awscli
+
+      # Configure AWS credentials for access to AWS services
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      # Package the application into a ZIP file for deployment
+      - name: Zip the application
+        run: |
+          zip -r flight-delay-predictor-api.zip .
+
+      # Upload the ZIP file to the specified S3 bucket
+      - name: Upload ZIP to S3
+        run: |
+          aws s3 cp flight-delay-predictor-api.zip s3://elasticbeanstalk-us-east-1-995093972491/flight-delay-predictor-api-${{ github.sha }}.zip
+
+      # Deploy the application to Elastic Beanstalk
+      - name: Deploy to Elastic Beanstalk
+        run: |
+          # Create a new version of the application on Elastic Beanstalk using the ZIP file from S3
+          aws elasticbeanstalk create-application-version \
+            --application-name flight-delay-predictor-api \
+            --version-label ${{ github.sha }} \
+            --source-bundle S3Bucket=elasticbeanstalk-us-east-1-995093972491,S3Key=flight-delay-predictor-api-${{ github.sha }}.zip
+
+          # Update the Elastic Beanstalk environment to use the new application version
+          aws elasticbeanstalk update-environment \
+            --environment-name flight-delay-predictor-api-env \
+            --version-label ${{ github.sha }}

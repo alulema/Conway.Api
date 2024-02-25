@@ -1,0 +1,38 @@
+name: Continuous Integration
+
+# This CI workflow is triggered on push or pull request events to the main branch
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest # Specifies that the job should run on the latest Ubuntu runner
+
+    steps:
+      # Checkout the code in the GitHub repository
+      - uses: actions/checkout@v4
+      
+      # Set up .NET environment
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '7.0.x'
+      
+      # Restore dependencies specified in the .sln files
+      - name: Restore dependencies
+        run: dotnet restore Conway.Api.sln
+      
+      # Build the solution in Release configuration to catch any compile time errors
+      - name: Build solution
+        run: dotnet build Conway.Api.sln --no-restore -c Release
+      
+      # Run tests within the project
+      - name: Test
+        run: dotnet test Conway.Api.Tests/Conway.Api.Tests.csproj --no-restore --verbosity normal
+      
+      # Build a Docker image to ensure that the application is correctly containerized
+      - name: Build Docker Image
+        run: docker build -t conway.api -f Conway.Api/Dockerfile .
