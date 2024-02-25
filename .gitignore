@@ -1,0 +1,6 @@
+.idea/
+**/.DS_Store
+Conway.Api.sln.DotSettings.user
+**/bin/
+**/obj/
+

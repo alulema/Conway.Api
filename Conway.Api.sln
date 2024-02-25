@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conway.Api", "Conway.Api\Conway.Api.csproj", "{BB04B7FC-9C4E-4625-BA24-18085AED2D86}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conway.Api.Tests", "Conway.Api.Tests\Conway.Api.Tests.csproj", "{1E2173D8-B030-4F86-AE89-2813BF626256}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Github Actions", "Github Actions", "{B8B8ABB8-A23C-4FEE-8A19-7212B4875DC8}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\cd.yml = .github\workflows\cd.yml
+		.github\workflows\ci.yml = .github\workflows\ci.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BB04B7FC-9C4E-4625-BA24-18085AED2D86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB04B7FC-9C4E-4625-BA24-18085AED2D86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB04B7FC-9C4E-4625-BA24-18085AED2D86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB04B7FC-9C4E-4625-BA24-18085AED2D86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E2173D8-B030-4F86-AE89-2813BF626256}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E2173D8-B030-4F86-AE89-2813BF626256}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E2173D8-B030-4F86-AE89-2813BF626256}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E2173D8-B030-4F86-AE89-2813BF626256}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

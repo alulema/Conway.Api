@@ -1,0 +1,6 @@
+2024-02-24 09:31:55.258 -05:00 [ERR] Failed executing DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE "Boards" (
+    "Id" TEXT NOT NULL CONSTRAINT "PK_Boards" PRIMARY KEY,
+    "StateSerialized" TEXT NOT NULL,
+    "Generation" INTEGER NOT NULL
+);
