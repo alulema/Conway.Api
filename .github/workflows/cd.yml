@@ -15,6 +15,30 @@ jobs:
       # Checkout the code in the GitHub repository
       - uses: actions/checkout@v4
 
+      # Set up .NET 7
+      - name: Set up .NET 7
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '7.0.x'
+
+      # Restore dependencies
+      - name: Restore dependencies
+        run: dotnet restore
+
+      # Build the project
+      - name: Build project
+        run: dotnet build --configuration Release --no-restore
+
+      # Publish the project
+      - name: Publish project
+        run: dotnet publish --configuration Release --no-restore --output publish
+
+      # Package the application for deployment
+      - name: Package application
+        run: |
+          cd publish
+          zip -r ../conway.api.zip .
+          
       # Set up the specified Python version
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -23,8 +47,7 @@ jobs:
 
       # Install AWS Command Line Interface for interacting with AWS services
       - name: Install AWS CLI
-        run: |
-          pip install awscli
+        run: pip install awscli
 
       # Configure AWS credentials for access to AWS services
       - name: Configure AWS credentials
@@ -34,26 +57,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      # Package the application into a ZIP file for deployment
-      - name: Zip the application
-        run: |
-          zip -r flight-delay-predictor-api.zip .
-
       # Upload the ZIP file to the specified S3 bucket
       - name: Upload ZIP to S3
         run: |
-          aws s3 cp flight-delay-predictor-api.zip s3://elasticbeanstalk-us-east-1-995093972491/flight-delay-predictor-api-${{ github.sha }}.zip
+          aws s3 cp conway.api.zip s3://${{ secrets.S3_KEY }}/conway.api-${{ github.sha }}.zip
 
       # Deploy the application to Elastic Beanstalk
       - name: Deploy to Elastic Beanstalk
         run: |
-          # Create a new version of the application on Elastic Beanstalk using the ZIP file from S3
           aws elasticbeanstalk create-application-version \
-            --application-name flight-delay-predictor-api \
+            --application-name conway-api \
             --version-label ${{ github.sha }} \
-            --source-bundle S3Bucket=elasticbeanstalk-us-east-1-995093972491,S3Key=flight-delay-predictor-api-${{ github.sha }}.zip
-
-          # Update the Elastic Beanstalk environment to use the new application version
+            --source-bundle S3Bucket=${{ secrets.S3_KEY }},S3Key=conway.api-${{ github.sha }}.zip
           aws elasticbeanstalk update-environment \
-            --environment-name flight-delay-predictor-api-env \
+            --environment-name conway-api-env \
             --version-label ${{ github.sha }}
