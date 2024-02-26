@@ -3,4 +3,5 @@
 Conway.Api.sln.DotSettings.user
 **/bin/
 **/obj/
-
+publish/
+conway.api.zip
